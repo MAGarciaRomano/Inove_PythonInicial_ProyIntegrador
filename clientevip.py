@@ -3,15 +3,6 @@
 # Año: 2022
 # Curso: Python Inicial de Inove
 
-# Descripción: Ejercicio integrador del curso PYTHON INICIAL.
-# El objetivo es poner en práctica los conceptos aprendidos en el curso:
-#    - Variables
-#    - Condicionales
-#    - Bucles
-#    - Funciones
-#    - Manejo de diccionarios
-#    - Manejo de archivos CSV (Comma Separated Values)
-
 import os
 import csv
 import recursos
@@ -28,14 +19,15 @@ campos = ['Id', 'Nombre', 'FechaNacimiento', 'Edad', 'Raza', 'Peso',
 # La primera vez también crea el archivo.
 def registrar_nuevo_cliente_canino():
     
+    print('* * * REGISTRO DE UN NUEVO CLIENTE CANINO Y RESPONSABLE A CARGO * * *')
     if os.path.isfile('clientevip.csv'):
-        #print('El archivo existe.')
+        # Si el archivo existe.
         with open('clientevip.csv') as csvcanino:
         
             id_cliente = recursos.generar_id()
     
     else:
-        #print('El archivo NO existe.') 
+        # Si el archivo no existe. 
         with open('clientevip.csv', 'w', newline = '') as csvcanino:
             writer = csv.DictWriter(csvcanino, fieldnames = campos)
             writer.writeheader()
@@ -66,9 +58,24 @@ def registrar_nuevo_cliente_canino():
         edad = relativedelta(datetime.now(), fecha_nacimiento)
         edad_canino = f"{edad.years} a, {edad.months} m, {edad.days} d"
 
-    # Ingreso de la raza y peso del canino.
-        raza_canino = str(input('Raza del nuevo cliente: ')).capitalize()
-        peso_canino = float(input('Peso del nuevo cliente canino: '))
+    # Ingreso y validación de la raza del canino.
+        while True:
+            raza_canino = str(input('Raza del nuevo cliente: ')).capitalize()
+            if any(caracter.isdigit() for caracter in raza_canino) is True:
+                print('¡ATENCIÓN! Debe ingresar una raza o mestizo. Vuelva a intentar.')
+                continue
+            else:
+                break
+
+    # Ingreso y validación del peso del canino.
+        while True:
+            try:
+                peso_canino = float(input('Peso del nuevo cliente canino: '))
+                if type(peso_canino) == float:
+                    break
+            except:
+                print("¡ATENCIÓN! Ingrese un número con parte entera, punto y parte decimal (Ejemplos: 13.5 ; 9.0).")
+                continue    
         
     # Ingreso y validación del sexo del canino.    
         while True:
@@ -134,6 +141,7 @@ def registrar_nuevo_cliente_canino():
 # La edad del canino se actualiza automáticamente.
 def modificar_cliente_canino():
 
+    print('* * * MODIFICACIÓN DE DATOS MÉDICOS DE UN CLIENTE CANINO * * *')
     # Solicitud del nombre del canino y apellido/s y nombre/s del responsanble.
     nombre_canino = str(input('Nombre del cliente canino: ')).capitalize()
     responsable_canino = str(input('Apellido/s y Nombre/s del responsable: ')).title()
@@ -218,6 +226,7 @@ def modificar_cliente_canino():
 
             else:
             # Finalizar ejecución del menú de opciones de modificación.
+            # En caso de opción incorrecta muestra datos con edad actualizada.
                 print('''
                     -----------------------------------------
                     La opción elegida no corresponde al menú.
@@ -267,6 +276,7 @@ def modificar_cliente_canino():
 # La edad del canino se actualiza automáticamente.
 def consulta_por_responsable():
     
+    print('* * * CONSULTA DE CANINOS A CARGO DE UN RESPONSABLE * * *')
     # Abrir el archivo en modo lectura y creación de una lista de diccionarios.
     with open('clientevip.csv', 'r') as csvconsulta:
         consulta_data = list(csv.DictReader(csvconsulta))
@@ -306,8 +316,9 @@ def consulta_por_responsable():
 # En la primera baja se crea el archivo de bajas.
 def eliminar_cliente_canino():
     
+    print('* * * BAJA DE CLIENTE CANINO * * *')
     # Solicitud del nombre del canino y apellido/s y nombre/s del responsanble.
-    nombre_canino = str(input('nombre del cliente canino a dar de baja: ')).capitalize()
+    nombre_canino = str(input('Nombre del cliente canino a dar de baja: ')).capitalize()
     responsable_canino = str(input('Apellido/s y Nombre/s del responsable: ')).title()
 
     # Abrir el archivo en modo lectura y creación de una lista de diccionarios.
@@ -377,33 +388,38 @@ if __name__ == '__main__':
     2 - Modificar datos de un cliente canino o dar de baja un cliente canino.
     3 - Realizar una consultar por apellido/s y nombre/s del responsable.
     4 - Dar de baja un cliente canino.
-    Para salir del programa pulse una tecla cualquiera.
+    Para salir del programa pulse cualquier otro número.
     Opcion elegida:'''
 
     while True:
-        opcion = int(input(menu))
         
-        # Informar al usuario la opción de trabajo seleccionada.
-        print(f'Usted ha elegido la opción: {opcion}')  
+        try: 
+            opcion = int(input(menu))
+            # Informar al usuario la opción de trabajo seleccionada.
+            print(f'Usted ha elegido la opción: {opcion}')  
         
-        # Rutina de trabajo según condicional:
-        if opcion == 1:
+            # Rutina de trabajo según condicional:
+            if opcion == 1:
             # Registro de un nuevo cliente canino.
-            registrar_nuevo_cliente_canino()
+                registrar_nuevo_cliente_canino()
 
-        elif opcion == 2:
+            elif opcion == 2:
             # Modificar datos de un cliente canino.
-            modificar_cliente_canino()
+                modificar_cliente_canino()
             
-        elif opcion == 3:
+            elif opcion == 3:
             # Consulta de caninos a cargo de un responsable.
-            consulta_por_responsable()
+                consulta_por_responsable()
 
-        elif opcion == 4:
+            elif opcion == 4:
             # Solicitar un outfit
-            eliminar_cliente_canino()
+                eliminar_cliente_canino()
             
-        else:
+            else:
             # Aviso de finalización de ejecución.
-            print('Ud. salió del programa.')
-            break
+                print('Ud. ha elegido salir. Fin del programa.')
+                break
+                
+        except:
+            print('¡OPCIÓN INVÁLIDA! Vuelva a intentar.')
+            continue
